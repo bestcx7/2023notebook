@@ -156,4 +156,44 @@ A content delivery network (CDN) is a globally distributed network of proxy serv
 -  In this model, the dispatcher multicast to all workers of the pool.  
   ![picture](images/Scatter_and_Gather.png)
 
-**Result Cache**
+**Result Cache**  
+In this model, the dispather will first lookup if the result has been made before and try to find the previous result to return, in order to save the actual execution.
+  ![picture](images/cache_result.png)
+
+**Shared Space**  
+This model also known as "Blackboard", all workers monitor information from the shared space and contributes the partical knowledge back to the blackboard. The information is constinuously enriched until a solution is reached.
+  ![picture](images/shared_space.png)
+
+**Pipe and filter**  
+This model is alsp known as 'Data Flow Programming', all workers connected by pipes where all data is flow across.
+  ![picture](images/Pipe_and_Filter.png)
+
+**Map Reduce**  
+This model is targeting batch jobs where disk I/O is the major bottleneck. It use a distributed file system, so that the disk I/O can be done in parallel.
+  ![picture](images/Map_reduce.png)
+
+**Bulk Synchronous Parallel**  
+This model is based on lock-step execution across all workers. coordinated by a master. Each worker repeat the following step until the exit condition is reached, when there is no more active workers.
+-  Each worker read data from input queue
+-  Each worker perform local processing base on the read data
+-  Each worker push loacl result along its direct connection
+  ![picture](images/Bulk_synchronous_parallel.png)
+
+**Execution Orchestrator**  
+This model is based on intelligent scheduler / orchestrator to schedule ready-to-run task (based on a dependency graph) across a clusters of dumb workers
+  ![picture](images/Exection_Orchestrator.png)
+
+**summary:** Load balancers distribute incoming client requests to computing resources such as application servers and databases. Load balancers are effective at:
+-  Preventing request from going to unhealthy servers
+-  Preventing overloading resources
+-  Helping to eliminate a single point of failure
+  
+Additional benefits include:
+- SSL termination: Decrypt incoming requests and Encrypt server response so backend servers do not have to perform these potential expensive operations
+- Session persistence: Issue cookies and route a specific client's requests to same instance if the web apps do not keep track of sessions
+
+### Horizontal scaling
+**Disadvantage(s): horizontal scaling**
+-  Scaling horizontally introduce complexity and involves cloning servers
+   -  Servers should be stateless: they should not contain any user-related data like sessions and profile pictures
+   -  Sessions can be stored in centralized data store like such as a database or persistent cache.
