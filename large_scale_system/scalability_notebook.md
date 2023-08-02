@@ -197,3 +197,67 @@ Additional benefits include:
 -  Scaling horizontally introduce complexity and involves cloning servers
    -  Servers should be stateless: they should not contain any user-related data like sessions and profile pictures
    -  Sessions can be stored in centralized data store like such as a database or persistent cache.
+-   Download servers such as caches and databases need to handle more simultaneous connections as upstream servers scale out.
+
+**Disadvantages load balancer**
+-  The load balancer can become a bottleneck if it doesn't have enough resource or it is not configured properly.
+-  Introducing a load balancer to help eliminate a single point of failure results in increased complexity.
+-  A single load balancer is a single point of failure, configuring multiple load balancers further increases complexity.
+
+## <font color=red>Reverse Proxy (web server)</font>
+**Summary:** A reverse proxy is a web server that centralizes internel services and provide unified interfaces to the public.  
+
+**Additional benefits include**:
+-  Increased security: Hide information about backend servers, blacklist IPs, list number of connections per client.
+-  Increased scalability and flexibility: Client only see proxy's IP, allowing you to scale servers or change their configuration.
+-  SSL terminal: Decrypt incoming requests and encrypt server responses so backend servers do not have to perform these potentially expensive operations.
+-  Compression: compress server response
+-  Caching: return the response for cached requests
+-  Static content: Serve static content directly  
+
+**Load balancer** vs **Reverse proxy**
+-  Deploying a load balancer is useful when you have multiple servers. Often, load balancer route traffic to a set of servers serving the same function.
+-  Reverse proxies can be useful even with just one web server or application server. opening up the benefits described in the previous section.
+-  Solutions such as NGINX and HAProxy can support both layer 7 reverse proxying and load balancing.
+
+**Disadvantages(s): reserve proxy**
+- Introducing reserve proxy results in increased complexity
+- A single reverse proxy is a single point of failure, configuring multiple reverse proxies (ie a failover) further increases complexity.
+
+## <font color=red>Application layer</font>
+A moderately large system may balance load at three layers:
+- user to your web servers
+- web servers to an internal platform layer,
+- internal platform layer to your database.
+
+There are a number of ways to implement load balancing.  
+
+### Smart clients
+What is a smart clients ? It's a client which takes a pool of service hosts and balaces load between them, detects downed hosts and avoids sending requests their way(they also have to detect recovered hosts, deal with adding new hosts).
+
+### Software load balancers
+HAProxy is a great example of this approach. HAProxy manages healthchecks and will remove and return machines to those pools according to configuration, as well as balancing all the machines in those pools as well.
+
+### Caching
+Caching will enable you to make vastly better use of the resources you already have, as well as making otherwise unattainable product requirements feasible.
+
+Caching consists of: precalculating results, pre-generating expensive indexes and storing cpoies of frequently accessed data in a faster backend.
+
+In practice, caching is important earlier in development process than load balancing, and starting with a consisent caching will save you time later on.
+
+#### Application vs. database caching
+Application caching requires explicit integration in the application code itself. Usually it will check if a value is in the cache, if not , retrieve the value from the database; then write that value into the cache. The code typically looks like :  
+```
+key = "user.%s" % user_id
+user_blob = memcache.get(key)
+if user_blob is None:
+   user = mysql.query("SELECT * FROM users WHERE user_id=\"%s\"", user_id)
+   if user:
+      memcache.set(key,json.dumps(user))
+    return user
+else:
+    return json.loads(user_blob)
+```
+When you flip your database on, you're going to get some level of default configuration which will provide some degree of caching and performance.Those initial setting will optimized for a generic usecase, and by tweaking them to your system's access patterns, you can generally squeeze a great deal of performance improvment.
+
+#### In-memory caches
