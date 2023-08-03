@@ -299,4 +299,44 @@ Systems such as Consul, Etcd and Zookeeper can help service find each other by k
 -  Microservices can add complexity in terms of deployments and operations
 
 ## <font color=red>Database</font>
-Relational database manage system (RDBMS)
+Relational database manage system (RDBMS), ACID is s set of properties of relational database transactions.
+  
+-  Atomicity - Each transaction is all or nothing
+-  Consistency - Any transaction will bring the database from one valid state to another
+-  Isolation - Executing transaction concurrently has the same result as if the transactions were executed serially
+-  Durability - Once a transaction has been committed, it will remain so.
+
+### Master-slave replication
+The master servers reads and writes, replicating writes to one or more slaves, which serve only reads. Slaves can also replicate to additional slaves in tree-like fashion. If the master goes offline, the system can continue to operate in a read-only mode until a slave promoted to a master or a new master is provisioned.
+
+![picture](images/Master_slave.png)
+
+#### Disadvantage(s): master-slave replication
+-  Additional logic is needed to promote a slave to a master.
+
+### Master-master replication
+Both masters serve reads and writes and coordinate with each other on writes. If either master goes down, the system can continue to operate with both reads and writes.
+
+![picture](images/Master-master.png)
+
+#### Disadvantage(s): master-master replication
+-  Loader balancer or logic determine where to write
+-  loosely consistent or write latency
+-  Conflict resolutions for more nodes or increased latency
+
+#### Disadvantage(s): replication
+-  Loss of data if a master fails before new data replicated
+-  Writes are replayed to the read replicas. If there are a lot of writes, the read replicas can get bogged down with replaying writes and can't do as many reads.
+-  more slave -> more to replicate
+-  more hard ware and additional complexity
+
+### Federation
+Federation(or functional partitioning) split up dataset by function.  
+
+#### Disadvantage(s): federation
+-  Not effective if schema requires huge function or tables
+-  determine which database to read and write
+-  join data from two database is complex
+
+### Sharding
+![picture](images/Sharding.png)
