@@ -261,3 +261,42 @@ else:
 When you flip your database on, you're going to get some level of default configuration which will provide some degree of caching and performance.Those initial setting will optimized for a generic usecase, and by tweaking them to your system's access patterns, you can generally squeeze a great deal of performance improvment.
 
 #### In-memory caches
+The most potent-in terms of raw performance - caches you'll encounter are those which store their entire set of data in memory.
+
+#### Content distribution networks
+CDN takes the burden of serving static media off of your application servers, and provide geographic distribution.
+
+#### Cache invalidation
+While caching is fantastic, it does require you to maintain the consistency between your caches and the source of truth. Solving this problem is known as *Cache invalidation*.
+
+### Off-line processing
+As a system grows more complex, it is almost always necessary to perfrom processing which cant's be performed in-line with a client's request bacause it creates unacceptable latency or it because it needs to occuer periodically.
+
+#### Message queue
+For processing you'd like to perform inline with a request but it too slow, the easiest solution is to create a message queue.
+
+#### Map-reduce
+Adding a map-reduce layer makes it possible to perform data and/or processing intensive operations in a reasonable amount of time.
+
+### Platform layer
+First, separating the platform and web application allows you to scale the pieces independently.  
+
+Second, adding a platform layer can be a way to reuse your infrastructure for multiple products and interfaces.  
+
+Third, a sometimes underappreciated aspect of platform layers is that they make it easier to scale an organization.  
+
+
+![picture](images/Separating_web_layer.png)
+
+#### Microservices
+Related to this discussion are microservices, which can be described as a suite of independently deployable, small, modular services. 
+
+#### Service Discovery
+Systems such as Consul, Etcd and Zookeeper can help service find each other by keeping track of registered names, addresses and ports.
+
+#### Disadvantage(s) : application layer
+-  Adding an application layer with loosely coupled services requires a different approach from an architectural, operations and process viewpoint.
+-  Microservices can add complexity in terms of deployments and operations
+
+## <font color=red>Database</font>
+Relational database manage system (RDBMS)
